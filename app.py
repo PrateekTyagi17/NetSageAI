@@ -116,3 +116,33 @@ st.plotly_chart(
     fig,
     use_container_width=True
 )
+st.divider()
+
+st.subheader("🌍 Top 10 Source IP Addresses")
+
+top_ips = (
+    packets_df["source_ip"]
+    .value_counts()
+    .head(10)
+    .reset_index()
+)
+
+top_ips.columns = [
+    "Source IP",
+    "Packet Count"
+]
+
+fig2 = px.bar(
+    top_ips,
+    x="Source IP",
+    y="Packet Count",
+    color="Packet Count",
+    text="Packet Count",
+    title="Top 10 Source IPs"
+)
+
+st.plotly_chart(
+    fig2,
+    use_container_width=True
+)
+
