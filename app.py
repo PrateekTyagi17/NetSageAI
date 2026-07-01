@@ -145,4 +145,100 @@ st.plotly_chart(
     fig2,
     use_container_width=True
 )
+st.divider()
 
+st.subheader("📊 Packet Size Distribution")
+
+fig3 = px.histogram(
+    packets_df,
+    x="packet_size",
+    nbins=30,
+    title="Distribution of Packet Sizes",
+    labels={"packet_size": "Packet Size (Bytes)"}
+)
+
+st.plotly_chart(
+    fig3,
+    use_container_width=True
+)
+# ============================================
+# Suspicious IP Addresses
+# ============================================
+
+st.divider()
+
+st.subheader("🚨 Suspicious IP Addresses")
+
+suspicious_df = anomaly_df[anomaly_df["anomaly"] == -1]
+
+if len(suspicious_df) > 0:
+
+    st.dataframe(
+        suspicious_df[
+            [
+                "source_ip",
+                "packet_count",
+                "avg_packet_size",
+                "traffic_volume"
+            ]
+        ],
+        use_container_width=True
+    )
+
+else:
+
+    st.success("✅ No suspicious IPs detected.")
+    # ============================================
+# Recent Network Packets
+# ============================================
+
+st.divider()
+
+st.subheader("📋 Recent Network Packets")
+
+recent_packets = packets_df.tail(10)
+
+recent_packets = recent_packets.rename(
+    columns={
+        "timestamp": "Timestamp",
+        "source_ip": "Source IP",
+        "destination_ip": "Destination IP",
+        "protocol": "Protocol",
+        "packet_size": "Packet Size (Bytes)"
+    }
+)
+
+st.dataframe(
+    recent_packets,
+    use_container_width=True
+)# ============================================
+# Search Network Traffic by IP
+# ============================================
+
+st.divider()
+
+st.subheader("🔍 Search Network Traffic by IP Address")
+
+search_ip = st.text_input(
+    "Enter Source IP Address",
+    placeholder="Example: 1.39.87.76"
+)
+
+if search_ip:
+
+    filtered_packets = packets_df[
+        packets_df["source_ip"] == search_ip
+    ]
+
+    if len(filtered_packets) > 0:
+
+        st.success(f"Found {len(filtered_packets)} packets.")
+
+        st.dataframe(
+            filtered_packets,
+            use_container_width=True
+        )
+
+    else:
+
+        st.warning("No packets found for this IP address.")
